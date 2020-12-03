@@ -54,11 +54,10 @@ pub fn nth_char(string: &str, loc: usize) -> char {
 #[aoc(day2, part2)]
 pub fn part2(passwords: &[PasswordAndPolicy]) -> i32 {
     passwords.iter().fold(0, |mut valid, x| {
-        match (nth_char(&x.password[..], x.min as usize) == x.letter, nth_char(&x.password[..], x.max as usize) == x.letter)  {
-            (true,  true) => valid,
-            (false, false) => valid,
-            _ => { valid += 1; valid },
+        if (nth_char(&x.password[..], x.min as usize) == x.letter) ^ (nth_char(&x.password[..], x.max as usize) == x.letter) {
+            valid += 1
         }
+        valid
     })
 }
 
