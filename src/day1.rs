@@ -3,12 +3,10 @@ pub fn part1(input: &str) -> Option<i32> {
     let mut my_ints = input.lines().map(|x|
         x.parse::<i32>().unwrap()
     ).collect::<Vec<i32>>();
-    my_ints.sort();
+    my_ints.sort_unstable();
     for x in &my_ints {
-        if 2020 - x > 0 {
-            if let Some(_) = my_ints.iter().position(|&y| y == 2020 - x ) {
-                return Some(x * (2020 - x))
-            }
+        if 2020 - x > 0 && my_ints.iter().any(|&y| y == 2020 - x ){
+            return Some(x * (2020 - x))
         }
     }
     None
@@ -19,11 +17,11 @@ pub fn part2(input: &str) -> Option<i32> {
     let mut my_ints = input.lines().map(|x|
         x.parse::<i32>().unwrap()
     ).collect::<Vec<i32>>();
-    my_ints.sort();
+    my_ints.sort_unstable();
     for x in &my_ints {
         if 2020 - x > 0 {
             for y in &my_ints {
-                if let Some(_) = my_ints.iter().position(|&z| z == 2020 - x - y ) {
+                if my_ints.iter().any(|&z| z == 2020 - x - y ) {
                     return Some(y * x * (2020 - x - y))
                 }
             }
