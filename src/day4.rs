@@ -74,10 +74,7 @@ impl FromStr for Passport {
             Some(x) => String::from(x),
             None => return Err(ParsePassportError::InvalidPassport),
         }; // pid (Passport ID)
-        let cid = match passport.get("cid") {
-            Some(x) => x,
-            None => "99999999",
-        }.parse::<u32>()?; // cid (Country ID)
+        let cid = passport.get("cid").unwrap_or(&String::from("999999")).parse::<u32>()?; // cid (Country ID)
 
         Ok(Passport{byr, iyr, eyr, hgt, hcl, ecl, pid, cid})
     }
