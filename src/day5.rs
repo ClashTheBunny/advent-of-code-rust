@@ -14,7 +14,7 @@ impl FromStr for Seat {
     type Err = ParseIntError;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        let binary_s = s.replace("F","0").replace("B","1").replace("R","1").replace("L","0");
+        let binary_s = s.replace(&['F', 'L'][..],"0").replace(&['B', 'R'][..],"1");
         let row: u32 = u32::from_str_radix(&binary_s[0..7],2)?;
         let col: u32 = u32::from_str_radix(&binary_s[7..],2)?;
         let id: usize = ((row * 8) + col) as usize;
