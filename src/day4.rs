@@ -1,11 +1,11 @@
 extern crate regex;
 extern crate lazy_static;
+use self::regex::Regex;
+use self::lazy_static::lazy_static;
 
 use std::str::FromStr;
 use std::num;
 use std::collections::HashMap;
-use self::regex::Regex;
-use self::lazy_static::lazy_static;
 
 #[derive(Debug, PartialEq)]
 pub struct Passport {
@@ -101,6 +101,7 @@ lazy_static! {
   static ref HGT_RE: Regex = Regex::new(r"^(\d+)(cm|in)$").unwrap();
 }
 
+#[allow(clippy::needless_lifetimes)]
 pub fn is_valid<'p>(passport: &'p &Passport) -> bool {
     if !(1920..=2002).contains(&passport.byr) {
         return false
