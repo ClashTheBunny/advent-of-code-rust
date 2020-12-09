@@ -31,11 +31,14 @@ pub fn part2(input: &[u64]) -> u64 {
     for start in 0..(input_len-1) {
         for window_len in 0..(input_len - start) {
             let local_range = &input[start..(start + window_len)];
-            if local_range.iter().cloned().sum::<u64>() == first_invalid {
+            let local_sum = local_range.iter().cloned().sum::<u64>();
+            if local_sum == first_invalid {
                 return match local_range.iter().minmax() {
                     MinMax(x,y) => x + y,
                     _ => 0,
                 }
+            } else if local_sum > first_invalid {
+                break
             }
         }
     }
