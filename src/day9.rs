@@ -10,7 +10,6 @@ pub fn input_generator(input: &str) -> Vec<u64> {
 
 #[aoc(day9, part1)]
 pub fn part1(input: &[u64]) -> u64 {
-    println!("{}", input.len());
     let window_length: usize = match input.len() {
         20 => 5,
         _ => 25,
