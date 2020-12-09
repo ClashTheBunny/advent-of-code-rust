@@ -1,7 +1,6 @@
 use std::num::ParseIntError;
 use std::str::FromStr;
 use std::collections::HashSet;
-use std::error::Error;
 
 #[derive(Debug, PartialEq, Clone)]
 pub struct Instruction {
@@ -25,35 +24,16 @@ pub fn input_generator(input: &str) -> Vec<Instruction> {
     }).filter_map(Result::ok).collect()
 }
 
-#[aoc(day8, part1)]
-pub fn part1(input: &Vec<Instruction>) -> Option<i32> {
-    let mut pos = 0;
-    let mut global_acc = 0;
-    let mut visited = HashSet::new();
-    loop {
-        if visited.contains(&pos){
-            return Some(global_acc);
-        }
-        visited.insert(pos);
-        match input.get(pos).unwrap().name.as_str() {
-            "nop" => pos += 1,
-            "acc" => { global_acc += input.get(pos).unwrap().arg; pos += 1 },
-            "jmp" => pos = ((pos as i32) + input.get(pos).unwrap().arg) as usize,
-            _ => panic!(),
-        }
-    }
-}
-
-pub fn run_part2(input: &Vec<Instruction>) -> Option<i32> {
+pub fn run_computer(input: &[Instruction]) -> Result<i32, i32> {
     let mut pos = 0;
     let mut global_acc = 0;
     let mut visited = HashSet::new();
     loop {
         if pos >= input.len() {
-            return Some(global_acc);
+            return Ok(global_acc);
         }
         if visited.contains(&pos){
-            return None;
+            return Err(global_acc);
         }
         visited.insert(pos);
         match input.get(pos).unwrap().name.as_str() {
@@ -65,8 +45,17 @@ pub fn run_part2(input: &Vec<Instruction>) -> Option<i32> {
     }
 }
 
+#[aoc(day8, part1)]
+pub fn part1(input: &[Instruction]) -> Option<i32> {
+    match run_computer(input) {
+        Ok(x) => panic!("Should not be okay, bad input? Resulted in: {}", x),
+        Err(x) => Some(x),
+    }
+}
+
+
 #[aoc(day8, part2)]
-pub fn part2(input: &Vec<Instruction>) -> Option<i32> {
+pub fn part2(input: &[Instruction]) -> Option<i32> {
     for (i, instruction) in input.iter().enumerate() {
         if instruction.name == "nop" || instruction.name == "jmp" {
               let mut test_instructions = input.to_vec();
@@ -77,7 +66,7 @@ pub fn part2(input: &Vec<Instruction>) -> Option<i32> {
                       _ => panic!(),
                   }, arg: instruction.arg };
               }
-              if let Some(x) = run_part2(&test_instructions) {
+              if let Ok(x) = run_computer(&test_instructions) {
                   return Some(x);
               }
         }
