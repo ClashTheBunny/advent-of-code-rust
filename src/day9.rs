@@ -1,6 +1,6 @@
-extern crate itertools;
-use self::itertools::Itertools;
-use self::itertools::MinMaxResult::{NoElements, OneElement, MinMax};
+use itertools::Itertools;
+use itertools::MinMaxResult::MinMax;
+use std::cmp::Ordering;
 
 #[aoc_generator(day9)]
 pub fn input_generator(input: &str) -> Vec<u64> {
@@ -16,7 +16,8 @@ pub fn part1(input: &[u64]) -> u64 {
     };
     for (i, window) in input.windows(window_length).enumerate() {
         let sumvar = input[window_length+i];
-        if ! window.iter().any(|x| { window.contains(&((sumvar as i64 - *x as i64) as u64)) } ) {
+        let valid_sumvar = window.iter().any(|x| { window.contains(&((sumvar as i64 - *x as i64) as u64)) } );
+        if ! valid_sumvar {
             return sumvar
         }
     }
@@ -31,13 +32,15 @@ pub fn part2(input: &[u64]) -> u64 {
         for window_len in 0..(input_len - start) {
             let local_range = &input[start..(start + window_len)];
             let local_sum = local_range.iter().cloned().sum::<u64>();
-            if local_sum == first_invalid {
-                return match local_range.iter().minmax() {
-                    MinMax(x,y) => x + y,
-                    _ => 0,
-                }
-            } else if local_sum > first_invalid {
-                break
+            match local_sum.cmp(&first_invalid) {
+                Ordering::Equal => {
+                    return match local_range.iter().minmax() {
+                        MinMax(x,y) => x + y,
+                        _ => 0,
+                    }
+                },
+                Ordering::Greater => break,
+                Ordering::Less => {},
             }
         }
     }
