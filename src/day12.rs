@@ -21,17 +21,7 @@ fn left_turn(dir_in: (i32, i32), n: i32) -> (i32, i32) {
         return dir_in
     }
     left_turn(
-        match dir_in {
-            (x, y) if x >= 0 && y >= 0 => (-y, x),
-            (x, y) if x <= 0 && y >= 0 => (-y, x),
-            (x, y) if x <= 0 && y <= 0 => (-y, x),
-            (x, y) if x >= 0 && y <= 0 => (-y, x),
-            // (0, 1) => (-1, 0),
-            // (1, 0) => (0, 1),
-            // (0, -1) => (1, 0),
-            // (-1, 0) => (0, -1),
-            _ => panic!("Directions other than left right up and down"),
-        },
+        (-dir_in.1, dir_in.0),
         n - 1
     )
 }
@@ -41,17 +31,7 @@ fn right_turn(dir_in: (i32, i32), n: i32) -> (i32, i32) {
         return dir_in
     }
     right_turn(
-        match dir_in {
-            (x, y) if x >= 0 && y >= 0 => (y, -x),
-            (x, y) if x >= 0 && y <= 0 => (y, -x),
-            (x, y) if x <= 0 && y <= 0 => (y, -x),
-            (x, y) if x <= 0 && y >= 0 => (y, -x),
-            // (0, 1) => (1, 0),
-            // (1, 0) => (0, -1),
-            // (0, -1) => (-1, 0),
-            // (-1, 0) => (0, 1),
-            _ => panic!("Directions other than left right up and down"),
-        },
+        (dir_in.1, -dir_in.0),
         n - 1
     )
 }
