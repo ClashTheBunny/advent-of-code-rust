@@ -1,6 +1,7 @@
 use cached::proc_macro::cached;
 use itertools::Itertools;
 use std::thread;
+use std::collections::HashSet;
 
 #[aoc_generator(day10)]
 pub fn input_generator(input: &str) -> Vec<u32> {
@@ -8,13 +9,11 @@ pub fn input_generator(input: &str) -> Vec<u32> {
 }
 
 #[cached]
-fn check_plugs(plug_list: Vec<u32>) -> Option<u32> {
+fn check_plugs(plug_list: Vec<u32>, max: i32) -> Option<u32> {
     let mut sort_input = plug_list;
     sort_input.push(0);
     sort_input.sort_unstable();
-    let max = sort_input.pop().unwrap();
-    sort_input.push(max);
-    sort_input.push(max+3);
+    sort_input.push(max as u32);
     let mut three_sum = 0;
     let mut two_sum = 0;
     let mut one_sum = 0;
@@ -33,40 +32,69 @@ fn check_plugs(plug_list: Vec<u32>) -> Option<u32> {
 
 #[aoc(day10, part1)]
 pub fn part1(input: &[u32]) -> u32 {
-    check_plugs(input.to_vec()).unwrap()
+    let mut sort_input = input.to_vec();
+    sort_input.sort_unstable();
+    let max = sort_input.pop().unwrap();
+    sort_input.push(max);
+    check_plugs(input.to_vec(), max as i32 + 3).unwrap()
 }
 
 #[cached]
-pub fn run_part2(input: Vec<u32>) -> u32{
-    let mut correct = 0;
-    let input_len = input.len();
-    if input_len > 1 && check_plugs(input.to_vec()).is_some() {
-        for combination in input.iter().cloned().combinations(input_len - 1) {
-           if check_plugs(combination.to_vec()).is_some() {
-               println!("{:?}", combination);
-               correct += 1; //+ run_part2(combination.to_vec());
+pub fn run_part2(plug_list: Vec<u32>, max: i32) -> HashSet<Vec<u32>>{
+    let mut sort_input = plug_list;
+    let mut max = max;
+    if max < 0 {
+        sort_input.sort_unstable();
+        max = sort_input.pop().unwrap() as i32;
+        sort_input.push(max as u32);
+        max += 3;
+    } else {
+        sort_input.sort_unstable();
+    }
+    let mut correct = HashSet::new();
+    let mut incorrect = HashSet::new();
+    let input_len = sort_input.len();
+    if input_len > 1 && check_plugs(sort_input.to_vec(), max).is_some() {
+        correct.insert(sort_input.to_vec());
+        for combination in sort_input.iter().cloned().combinations(input_len - 1) {
+           let mut copy = combination.to_vec();
+           copy.sort();
+           if correct.contains(&copy) || incorrect.contains(&copy) {
+               continue
+           }
+           if check_plugs(copy.to_vec(), max).is_some() {
+               correct.insert(copy.to_vec());
+               for combo in run_part2(copy, max) {
+                   correct.insert(combo);
+               }
+           } else {
+               incorrect.insert(copy.to_vec());
            };
         }
     }
     correct
 }
 
-#[allow(dead_code)]
+// #[allow(dead_code)]
 const STACK_SIZE: usize = 4 * 1024 * 1024;
 
 
-// #[aoc(day10, part2)]
+#[aoc(day10, part2)]
 pub fn part2(input: &[u32]) -> u32{
     let cloned_input = input.to_vec();
 
     // Spawn thread with explicit stack size
     let child = thread::Builder::new()
         .stack_size(STACK_SIZE)
-        .spawn(move || { run_part2(cloned_input) })
+        .spawn(move || { run_part2(cloned_input, -i32::MAX) })
         .unwrap();
 
     // Wait for thread to join
-    child.join().unwrap()
+    let result = child.join().unwrap();
+    // for item in result.iter() {
+    //     println!("{:?}", item);
+    // }
+    result.len() as u32
 
 }
 
@@ -91,11 +119,11 @@ mod tests {
 
     #[test]
     fn sample3() {
-        // assert_eq!(part2(&input_generator(SAMPLE_1)), 8);
+        assert_eq!(part2(&input_generator(SAMPLE_1)), 8);
     }
 
     #[test]
     fn sample4() {
-        // assert_eq!(part2(&input_generator(SAMPLE_2)), 19208);
+        assert_eq!(part2(&input_generator(SAMPLE_2)), 19208);
    }
 }
