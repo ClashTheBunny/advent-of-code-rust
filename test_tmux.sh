@@ -8,7 +8,8 @@ cargo aoc input -y 2020 -d "$DAY"
 
 head input/2020/day${DAY}.txt
 
+[[ -f "src/day${DAY}.rs" ]] || sed -e 's/dayX/day'${DAY}'/g' src/dayX.rs > "src/day${DAY}.rs"
+
 for COMMAND in "${COMMANDS[@]}"; do
-  echo tmux split-window "git ls-files -cdmo --exclude-standard | entr $COMMAND"
   tmux split-window "git ls-files -cdmo --exclude-standard | entr $COMMAND"
 done

@@ -105,17 +105,12 @@ pub fn part1(input: &HashMap<(usize, usize), bool>) -> u64 {
 
     let max_factor: i32 = 1;
 
-    let mut rounds = 0;
-
     loop {
-        // println!("{:?}", newseats);
         match step_seats(newseats, max_x, max_y, 4, max_factor) {
             (x, true) => newseats = x,
             (x, false) => {newseats = x; break},
         }
-        rounds += 1;
     }
-    // print_seat_map(&newseats);
     newseats.iter().fold(0, |mut count, (_, val)| { if *val { count += 1 }; count })
 }
 
@@ -141,17 +136,12 @@ pub fn part2(input: &HashMap<(usize, usize), bool>) -> u64 {
         max_factor = max_y as i32;
     }
 
-    let mut rounds = 0;
-
     loop {
-        // println!("{:?}", newseats);
         match step_seats(newseats, max_x, max_y, 5, max_factor) {
             (x, true) => newseats = x,
             (x, false) => {newseats = x; break},
         }
-        rounds += 1;
     }
-    // print_seat_map(&newseats);
     newseats.iter().fold(0, |mut count, (_, val)| { if *val { count += 1 }; count })
 }
 
