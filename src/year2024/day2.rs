@@ -30,9 +30,7 @@ pub fn part2(input: &[Vec<u32>]) -> u32 {
 
     input.iter().for_each(|x| {
         let mut success: bool = false;
-        println!(": {:?}", x);
         for y in x.iter().combinations(x.len()-1) {
-            println!("! {:?}", y);
             if y.is_sorted_by(|a, b| (a>b) && (**a - **b < 4)) {
                 success = true
             };
@@ -40,8 +38,6 @@ pub fn part2(input: &[Vec<u32>]) -> u32 {
                 success = true
             };
             if success {
-                println!("; {:?}", y);
-                println!("");
                 break;
             }
         };
