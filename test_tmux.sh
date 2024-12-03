@@ -1,12 +1,13 @@
 #!/bin/bash
 
-DAY=$1
+YEAR=$1
+DAY=$2
 
 COMMANDS=("rustup run nightly cargo clippy --all-targets -- -Z macro-backtrace" "cargo test -- --nocapture")
 
-cargo aoc input -y 2020 -d "$DAY"
+cargo aoc input -y $YEAR -d "$DAY"
 
-head input/2020/day${DAY}.txt
+head input/$YEAR/day${DAY}.txt
 
 [[ -f "src/day${DAY}.rs" ]] || sed -e 's/dayX/day'${DAY}'/g' src/dayX.rs > "src/day${DAY}.rs"
 
