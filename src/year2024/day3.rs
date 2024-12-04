@@ -12,8 +12,8 @@ lazy_static! {
 #[derive(Debug, PartialEq)]
 pub struct Instruction {
     op: String,
-    arg0: Result<u32, std::num::ParseIntError>,
-    arg1: Result<u32, std::num::ParseIntError>,
+    arg0: Option<u32>,
+    arg1: Option<u32>,
 }
 
 impl FromStr for Instruction {
@@ -21,7 +21,10 @@ impl FromStr for Instruction {
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         let split_answer: Vec<&str> = s.split(&['(', ',', ')',][..]).collect();
-        Ok(Instruction{arg0: split_answer[1].parse::<u32>(), arg1: split_answer[2].parse::<u32>(), op: String::from(split_answer[0])})
+        match split_answer[0] {
+            "mul" => Ok(Instruction{arg0: Some(split_answer[1].parse::<u32>().unwrap()), arg1: Some(split_answer[2].parse::<u32>().unwrap()), op: String::from(split_answer[0])}),
+            _ => Ok(Instruction{arg0: None, arg1: None, op: String::from(split_answer[0])}),
+        }
     }
 }
 
@@ -34,7 +37,7 @@ pub fn input_generator(input: &str) -> Vec<Instruction> {
 
 #[aoc(day3, part1)]
 pub fn part1(input: &[Instruction]) -> u32 {
-    input.iter().filter(|instruction| instruction.op == "mul").map(|instruction| instruction.arg0.clone().unwrap() * instruction.arg1.clone().unwrap()).sum()
+    input.iter().filter(|instruction| instruction.op == "mul").map(|instruction| instruction.arg0.unwrap() * instruction.arg1.unwrap()).sum()
 }
 
 #[aoc(day3, part2)]
@@ -45,7 +48,7 @@ pub fn part2(input: &[Instruction]) -> u32 {
         match instruction.op.as_str() {
           "don't" => process = false,
           "do" => process = true,
-          "mul" => if process { sum += instruction.arg1.clone().unwrap() * instruction.arg0.clone().unwrap() },
+          "mul" => if process { sum += instruction.arg1.unwrap() * instruction.arg0.unwrap() },
           _ => panic!("oops"),
         }
     }
