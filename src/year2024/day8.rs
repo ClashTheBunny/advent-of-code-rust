@@ -1,14 +1,14 @@
-#[aoc_generator(dayX)]
+#[aoc_generator(day8)]
 pub fn input_generator(_input: &str) -> i32 {
     3
 }
 
-#[aoc(dayX, part1)]
+#[aoc(day8, part1)]
 pub fn part1(_input: &i32) -> u32 {
     2
 }
 
-#[aoc(dayX, part2)]
+#[aoc(day8, part2)]
 pub fn part2(_input: &i32) -> u32 {
     1
 }
@@ -18,7 +18,18 @@ mod tests {
     use super::{input_generator, part1, part2};
 
     const SAMPLES: &[(&str, u32, u32)] = &[
-        (r#"multilineInputString"#, 4, 5)];
+        (r#"............
+........0...
+.....0......
+.......0....
+....0.......
+......A.....
+............
+............
+........A...
+.........A..
+............
+............"#, 4, 5)];
 
     #[test]
     fn sample1() {
